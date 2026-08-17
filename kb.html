@@ -44,7 +44,7 @@
         .content-header p { color: #64748b; font-size: 14px; }
         
         .stats-bar { display: flex; gap: 20px; margin-bottom: 30px; flex-wrap: wrap; }
-        .stat-item { background: white; padding: 14px 16px 10px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); text-align: center; min-width: 110px; display: flex; flex-direction: column; align-items: center; gap: 4px; border-left: 4px solid transparent; transition: all 0.2s; }
+        .stat-item { background: white; padding: 14px 16px 10px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); text-align: center; min-width: 120px; display: flex; flex-direction: column; align-items: center; gap: 4px; border-left: 4px solid transparent; transition: all 0.2s; }
         .stat-item:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.1); transform: translateY(-1px); }
         .stat-value { font-size: 26px; font-weight: bold; color: #1e3a5f; line-height: 1; display: flex; align-items: center; gap: 4px; }
         .stat-label { font-size: 11px; color: #64748b; }
@@ -690,7 +690,7 @@ const KNOWLEDGE_BASE = [{"id":"mba-strategy-001","module":"mba","category":"战�
                         <span class="card-icon">${item.icon}</span>
                         <h3 class="card-title">${item.title}</h3>
                     </div>
-                    <div class="card-source">📚 ${item.source}</div>
+                    <div class="card-source">📖 ${item.subtitle || item.source}</div>
                     <p class="card-desc">${item.description}</p>
                     <div class="card-footer">
                         <div class="card-tags-row">
