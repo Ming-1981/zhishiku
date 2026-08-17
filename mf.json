@@ -1,0 +1,26 @@
+{
+  "name": "综合知识库",
+  "short_name": "知识库",
+  "description": "MBA·M360·OPR·采购供应链·成本会计 方法论知识库",
+  "start_url": "./kb.html",
+  "display": "standalone",
+  "background_color": "#1a2a4a",
+  "theme_color": "#1E3A5F",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "icon192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["education", "business"],
+  "lang": "zh-CN"
+}
