@@ -168,32 +168,44 @@
         @media (max-width: 768px) {
             .mobile-toggle { display: flex; flex-direction: column; }
             .sidebar-overlay.show { display: block; }
-            .sidebar { width: 260px; transform: translateX(-100%); transition: transform 0.3s ease; z-index: 1000; }
+            .sidebar { width: 280px; transform: translateX(-100%); transition: transform 0.3s ease; z-index: 1000; }
             .sidebar.open { transform: translateX(0); }
             .main { margin-left: 0; padding: 16px; padding-top: 70px; }
             .cards-grid { grid-template-columns: 1fr !important; }
-            .cards-grid { display: flex; flex-direction: column; gap: 12px; }
-            .card { width: 100% !important; max-width: 100% !important; }
-            .stats-bar { gap: 10px; }
-            .stat-item { min-width: calc(50% - 10px) !important; }
+            .card { width: 100% !important; max-width: 100% !important; padding: 16px !important; margin-bottom: 0 !important; }
+            .card-title { font-size: 15px !important; line-height: 1.4; }
+            .card-desc { font-size: 12px !important; -webkit-line-clamp: 2 !important; height: auto !important; }
+            .card-subtitle { font-size: 11px !important; }
+            .card-tags { display: none; }
+            .stats-bar { gap: 8px; }
+            .stat-item { min-width: calc(33.33% - 8px) !important; padding: 10px 6px !important; }
+            .stat-value { font-size: 20px !important; }
+            .stat-label { font-size: 10px !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
             .filter-bar { flex-direction: column; align-items: stretch; gap: 8px; padding: 12px; }
             .filter-group { width: 100%; }
-            .filter-select { flex: 1; }
+            .filter-select { flex: 1; font-size: 12px; }
             .search-box { width: 100%; }
             .export-section-header { flex-direction: column; align-items: flex-start; gap: 6px; }
             .export-all-row { flex-direction: column; }
-            .export-card { min-width: 100% !important; }
+            .export-card { min-width: 100% !important; padding: 12px !important; }
+            .export-card .card-title { font-size: 13px !important; }
             .modal-content { margin: 10px; padding: 16px; max-height: 90vh; overflow-y: auto; }
-            .content-header h1 { font-size: 22px; }
+            .content-header h1 { font-size: 20px; }
             .sidebar-title { font-size: 16px; padding-left: 60px; }
+            .cards-grid { gap: 10px; }
         }
         @media (max-width: 480px) {
             .main { padding: 12px; padding-top: 70px; }
-            .content-header h1 { font-size: 20px; }
-            .content-header p { font-size: 13px; }
-            .stat-item { min-width: calc(50% - 6px) !important; padding: 10px 8px; }
-            .stat-value { font-size: 22px; }
-            .card { padding: 14px; }
+            .content-header h1 { font-size: 18px; }
+            .content-header p { font-size: 12px; line-height: 1.5; }
+            .stat-item { min-width: calc(33.33% - 6px) !important; padding: 8px 4px !important; }
+            .stat-value { font-size: 18px !important; }
+            .stat-label { font-size: 9px !important; }
+            .card { padding: 14px 12px !important; }
+            .card-title { font-size: 14px !important; }
+            .card-desc { display: none; }
+            .filter-bar { padding: 10px; gap: 6px; }
+            .filter-label { font-size: 11px; }
         }
 
         /* ===== MBA风格弹窗样式 ===== */
