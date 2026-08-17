@@ -1,4 +1,4 @@
-const CACHE_NAME = 'kb-v1';
+const CACHE_NAME = 'kb-v2';
 const ASSETS = [
   './',
   './manifest.json',
