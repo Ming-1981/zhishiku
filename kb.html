@@ -185,10 +185,13 @@
             .sidebar-overlay.show { display: block; }
             .sidebar { width: 280px; transform: translateX(-100%); transition: transform 0.3s ease; z-index: 1000; }
             .sidebar.open { transform: translateX(0); }
-            .main { margin-left: 0; padding: 16px; padding-top: 60px; position: relative; }
-            .content-header { margin-bottom: 16px; }
-            .content-header h1 { font-size: 20px; }
-            .mobile-toggle { display: flex !important; position: absolute !important; top: 10px !important; left: 14px !important; }
+            .main { margin-left: 0; padding: 12px 16px; }
+            /* 整个头部 sticky 固定，滑动时汉堡按钮始终可见 */
+            .content-header { position: sticky; top: 0; z-index: 999; background: #f5f7fa; padding: 10px 0 8px; display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+            .mobile-toggle { display: flex !important; flex-shrink: 0; }
+            .content-header-text { flex: 1; min-width: 0; }
+            .content-header h1 { font-size: 18px !important; margin-bottom: 2px; }
+            .content-header p { font-size: 11px !important; display: block !important; }
             .stats-bar-top .stat-item { min-width: calc(50% - 4px) !important; max-width: none !important; flex: none !important; }
             .stats-bar-modules .stat-item { min-width: calc(33.33% - 6px) !important; }
             .cards-grid { grid-template-columns: 1fr !important; }
@@ -212,13 +215,14 @@
             .export-card { min-width: 100% !important; padding: 12px !important; }
             .export-card .card-title { font-size: 13px !important; }
             .modal-content { margin: 10px; padding: 16px; max-height: 90vh; overflow-y: auto; }
-            .content-header h1 { font-size: 20px; }
-            .sidebar-title { font-size: 16px; padding-left: 60px; }
+            .sidebar-title { font-size: 16px; padding-left: 0; }
             .cards-grid { gap: 10px; }
         }
         @media (max-width: 480px) {
-            .main { padding: 12px; padding-top: 70px; }
-            .content-header h1 { font-size: 18px; }
+            .main { padding: 10px 12px; }
+            .content-header { padding: 8px 0 6px; }
+            .content-header h1 { font-size: 16px !important; }
+            .content-header p { font-size: 10px !important; }
             .content-header p { font-size: 12px; line-height: 1.5; }
             .stat-item { min-width: calc(50% - 3px) !important; padding: 8px 4px !important; }
             .stat-value { font-size: 18px !important; }
@@ -443,10 +447,6 @@ const KNOWLEDGE_BASE = [{"id":"mba-strategy-001","module":"mba","category":"战�
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
     <div class="container">
-        <!-- 手机端汉堡菜单（与标题并排）-->
-        <button class="mobile-toggle" id="mobileToggle" aria-label="打开菜单">
-            <span></span><span></span><span></span>
-        </button>
         <aside class="sidebar">
             <div class="sidebar-title">📚 综合知识库</div>
             
@@ -461,9 +461,14 @@ const KNOWLEDGE_BASE = [{"id":"mba-strategy-001","module":"mba","category":"战�
         </aside>
         
         <main class="main">
-            <div class="content-header">
-                <h1 id="contentTitle">📚 知识库首页</h1>
-                <p id="contentDesc">涵盖企业战略与决策、精益制造、流程改进、采购供应链等多个领域的知识与方法论</p>
+            <div class="content-header" id="contentHeader">
+                <button class="mobile-toggle" id="mobileToggle" aria-label="打开菜单">
+                    <span></span><span></span><span></span>
+                </button>
+                <div class="content-header-text">
+                    <h1 id="contentTitle">📚 知识库首页</h1>
+                    <p id="contentDesc">涵盖企业战略与决策、精益制造、流程改进、采购供应链等多个领域的知识与方法论</p>
+                </div>
             </div>
             
             <div class="stats-bar stats-bar-top" id="statsBar"></div>
