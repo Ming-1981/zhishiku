@@ -23,28 +23,43 @@ self.addEventListener('activate', e => {
   );
 });
 
-// 请求拦截：缓存优先，未命中则网络
+// 请求拦截：网络优先，未命中则缓存
 self.addEventListener('fetch', e => {
   // POST 请求不缓存
   if (e.request.method !== 'GET') return;
 
+  const url = new URL(e.request.url);
+
+  // HTML 文档（主页）使用网络优先策略——确保总是获取最新内容
+  if (url.pathname === '/' || url.pathname.endsWith('kb.html') || url.pathname.endsWith('index.html')) {
+    e.respondWith(
+      fetch(e.request)
+        .then(response => {
+          if (response && response.status === 200) {
+            const clone = response.clone();
+            caches.open(CACHE_NAME).then(cache => cache.put(e.request, clone));
+          }
+          return response;
+        })
+        .catch(() => caches.match(e.request))
+    );
+    return;
+  }
+
+  // 其他资源（CSS/JS/图片）使用缓存优先
   e.respondWith(
     caches.match(e.request).then(cached => {
       if (cached) return cached;
-
       return fetch(e.request).then(response => {
-        // 非成功状态不缓存
         if (!response || response.status !== 200 || response.type !== 'basic') {
           return response;
         }
-
         const clone = response.clone();
         caches.open(CACHE_NAME).then(cache => cache.put(e.request, clone));
         return response;
       }).catch(() => {
-        // 离线且无缓存，返回离线提示（仅对 HTML 请求）
         if (e.request.destination === 'document') {
-          return caches.match('./综合知识库.html');
+          return caches.match('./');
         }
       });
     })
