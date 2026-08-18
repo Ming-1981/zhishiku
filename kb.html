@@ -690,7 +690,7 @@ const KNOWLEDGE_BASE = [{"id":"mba-strategy-001","module":"mba","category":"战�
                         <span class="card-icon">${item.icon}</span>
                         <h3 class="card-title">${item.title}</h3>
                     </div>
-                    <div class="card-source">📖 ${item.subtitle || item.source}</div>
+                    <div class="card-source">📖 ${(item.subtitle || item.description || item.source).substring(0, 42)}${(item.subtitle || item.description || '').length > 42 ? '…' : ''}</div>
                     <p class="card-desc">${item.description}</p>
                     <div class="card-footer">
                         <div class="card-tags-row">
