@@ -541,17 +541,14 @@ const KNOWLEDGE_BASE = [{"id":"mba-strategy-001","module":"mba","category":"战�
     <script>
     console.log('[KB] Script parse start');
     window.onerror = function(msg, url, line, col, error) {
-        // 忽略跨域 "Script error"（Service Worker 在 iOS Safari 失败时触发，行号始终为0，无法修复直接屏蔽）
-        var msgStr = String(msg || '').trim().toLowerCase();
-        var urlStr = String(url || '');
-        // 匹配任何包含 "script error" 的跨域错误
-        if (msgStr.includes('script error')) {
-            console.log('[KB] Ignoring cross-origin Script error, url:', urlStr, 'line:', line);
+        var msgStr = String(msg || '').trim();
+        // 忽略一切包含 "script error"（大小写不敏感）的跨域错误
+        if (msgStr.toLowerCase().includes('script error')) {
             return true;
         }
-        console.error('[KB] GLOBAL ERROR:', msg, 'at line', line, 'col', col);
+        // 其他错误显示友好界面
         var grid = document.getElementById('cardsGrid');
-        if (grid) grid.innerHTML = '<div style="padding:40px;text-align:center;color:#ef4444;">❌ JS错误: ' + msg + '<br><small>行号:' + line + '</small><br><button onclick="location.reload()" style="margin-top:10px;padding:8px 16px;background:#3b82f6;color:white;border:none;border-radius:6px;cursor:pointer;">刷新</button></div>';
+        if (grid) grid.innerHTML = '<div style="padding:40px;text-align:center;color:#ef4444;">❌ JS错误: ' + msgStr + '<br><small>行号:' + line + '</small><br><button onclick="location.reload()" style="margin-top:10px;padding:8px 16px;background:#3b82f6;color:white;border:none;border-radius:6px;cursor:pointer;">刷新</button></div>';
         return true;
     };
     console.log('[KB] Global error handler registered');
@@ -1621,17 +1618,6 @@ ${detailsHtml ? detailsHtml : ''}
         document.head.appendChild(script);
     }
 
-    // ===== Service Worker 注册（确保更新自动生效）=====
-    if ('serviceWorker' in navigator) {
-        try {
-            navigator.serviceWorker.register('./sw.js').then(reg => {
-                console.log('SW registered, checking for updates...');
-                reg.update(); // 主动检查新版本
-            }).catch(err => console.log('SW registration failed:', err));
-        } catch(e) {
-            console.log('SW registration blocked:', e.message);
-        }
-    }
     console.log('[KB] Script fully parsed OK');
     </script>
 </body>
