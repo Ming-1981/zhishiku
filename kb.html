@@ -1281,7 +1281,7 @@ const KNOWLEDGE_BASE = [{"id":"mba-strategy-001","module":"mba","category":"战�
     .page-header { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   }
 </style>
-</head>
+</` + `head>
 <body>
 <div class="page-header">
   <h1>📚 ${moduleName}</h1>
@@ -1295,7 +1295,7 @@ ${cardsHtml}
 <div class="page-footer">
   综合知识库 · 共 ${total} 条知识方法论 · 武汉大学MBA学习资料
 </div>
-</body>
+</` + `body>
 </html>`;
 
         const win = window.open('', '_blank');
@@ -1418,7 +1418,7 @@ ${cardsHtml}
   .footer { text-align: center; font-size: 11px; color: #94a3b8; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e2e8f0; }
   @media print { body { padding: 20px; } .section { break-inside: avoid; } }
 </style>
-</head>
+</` + `head>
 <body>
 <div class="header">
   <div class="header-icon">${item.icon}</div>
@@ -1444,7 +1444,7 @@ ${detailsHtml ? detailsHtml : ''}
 <div class="footer">
   综合知识库 · 武汉大学MBA学习资料 · ${item.id}
 </div>
-</body>
+</` + `body>
 </html>`;
 
         const win = window.open('', '_blank');
