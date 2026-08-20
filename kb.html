@@ -498,6 +498,7 @@ const KNOWLEDGE_BASE = [{"id":"mba-strategy-001","module":"mba","category":"战�
                 </div>
             </div>
             
+            <div id="debugLog" style="background:#1a1a2e;color:#0f0;padding:10px;font-family:monospace;font-size:12px;max-height:200px;overflow:auto;margin-bottom:10px;border-radius:8px;display:none;"></div>
             <div id="cardsGrid" class="cards-grid"></div>
             <div id="emptyState" class="empty-state" style="display:none;">
                 <div class="icon">📭</div>
@@ -533,6 +534,14 @@ const KNOWLEDGE_BASE = [{"id":"mba-strategy-001","module":"mba","category":"战�
     </div>
     
     <script>
+    console.log('[KB] Script parse start');
+    window.onerror = function(msg, url, line, col, error) {
+        console.error('[KB] GLOBAL ERROR:', msg, 'at line', line, 'col', col);
+        var grid = document.getElementById('cardsGrid');
+        if (grid) grid.innerHTML = '<div style="padding:40px;text-align:center;color:#ef4444;">❌ JS错误: ' + msg + '<br><small>行号:' + line + '</small><br><button onclick="location.reload()" style="margin-top:10px;padding:8px 16px;background:#3b82f6;color:white;border:none;border-radius:6px;cursor:pointer;">刷新</button></div>';
+        return true;
+    };
+    console.log('[KB] Global error handler registered');
     // KNOWLEDGE_BASE 已移至外部文件 kb_data.js
 // ==================== 全局状态 ====================
     let currentFilter = { module: 'all', situation: 'all', type: 'all', search: '', category: 'all' };
@@ -546,9 +555,33 @@ const KNOWLEDGE_BASE = [{"id":"mba-strategy-001","module":"mba","category":"战�
             return;
         }
         console.log('[KB] DOMContentLoaded start, KNOWLEDGE_BASE:', KNOWLEDGE_BASE.length, 'items');
-        try { buildSidebar(); console.log('[KB] buildSidebar done'); } catch(e) { console.error('[KB] buildSidebar error:', e); }
-        try { renderCards(); console.log('[KB] renderCards done'); } catch(e) { console.error('[KB] renderCards error:', e); }
-        try { updateStats(); console.log('[KB] updateStats done'); } catch(e) { console.error('[KB] updateStats error:', e); }
+        
+        // 进度指示器（调试用）
+        const debugEl = document.getElementById('debugLog');
+        function log(msg) { console.log(msg); if (debugEl) debugEl.innerHTML += '<div>' + msg + '</div>'; }
+        
+        try { 
+            buildSidebar(); 
+            log('✅ buildSidebar 完成'); 
+        } catch(e) { 
+            log('❌ buildSidebar 错误: ' + e.message); 
+            console.error('[KB] buildSidebar error:', e); 
+        }
+        try { 
+            renderCards(); 
+            log('✅ renderCards 完成，卡片数: ' + document.querySelectorAll('.card').length); 
+        } catch(e) { 
+            log('❌ renderCards 错误: ' + e.message); 
+            console.error('[KB] renderCards error:', e); 
+        }
+        try { 
+            updateStats(); 
+            log('✅ updateStats 完成'); 
+        } catch(e) { 
+            log('❌ updateStats 错误: ' + e.message); 
+            console.error('[KB] updateStats error:', e); 
+        }
+        if (debugEl) debugEl.innerHTML += '<hr>';
 
         // ===== 手机端汉堡菜单 =====
         console.log('[KB] Setting up mobile toggle');
@@ -1524,6 +1557,7 @@ ${detailsHtml ? detailsHtml : ''}
             reg.update(); // 主动检查新版本
         }).catch(err => console.log('SW registration failed:', err));
     }
+    console.log('[KB] Script fully parsed OK');
     </script>
 </body>
 </html>
