@@ -539,7 +539,13 @@ const KNOWLEDGE_BASE = [{"id":"mba-strategy-001","module":"mba","category":"战�
 
     // ==================== 初始化 ====================
     document.addEventListener('DOMContentLoaded', function() {
-        console.log('[KB] DOMContentLoaded start');
+        // 检查数据是否加载
+        if (typeof KNOWLEDGE_BASE === 'undefined' || !KNOWLEDGE_BASE || KNOWLEDGE_BASE.length === 0) {
+            const grid = document.getElementById('cardsGrid');
+            if (grid) grid.innerHTML = '<div style="padding:40px;text-align:center;color:#ef4444;font-size:16px;">⚠️ 数据加载失败，请刷新重试<br><br><button onclick="location.reload()" style="padding:10px 20px;background:#3b82f6;color:white;border:none;border-radius:8px;cursor:pointer;">刷新页面</button></div>';
+            return;
+        }
+        console.log('[KB] DOMContentLoaded start, KNOWLEDGE_BASE:', KNOWLEDGE_BASE.length, 'items');
         try { buildSidebar(); console.log('[KB] buildSidebar done'); } catch(e) { console.error('[KB] buildSidebar error:', e); }
         try { renderCards(); console.log('[KB] renderCards done'); } catch(e) { console.error('[KB] renderCards error:', e); }
         try { updateStats(); console.log('[KB] updateStats done'); } catch(e) { console.error('[KB] updateStats error:', e); }
