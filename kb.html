@@ -542,8 +542,11 @@ const KNOWLEDGE_BASE = [{"id":"mba-strategy-001","module":"mba","category":"战�
     console.log('[KB] Script parse start');
     window.onerror = function(msg, url, line, col, error) {
         // 忽略跨域 "Script error"（Service Worker 在 iOS Safari 失败时触发，行号始终为0，无法修复直接屏蔽）
-        if (msg === 'Script error.' && line === 0) {
-            console.log('[KB] Ignoring cross-origin Script error from SW registration');
+        var msgStr = String(msg || '').trim().toLowerCase();
+        var urlStr = String(url || '');
+        // 匹配任何包含 "script error" 的跨域错误
+        if (msgStr.includes('script error')) {
+            console.log('[KB] Ignoring cross-origin Script error, url:', urlStr, 'line:', line);
             return true;
         }
         console.error('[KB] GLOBAL ERROR:', msg, 'at line', line, 'col', col);
