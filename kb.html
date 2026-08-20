@@ -542,6 +542,14 @@ const KNOWLEDGE_BASE = [{"id":"mba-strategy-001","module":"mba","category":"战�
         return true;
     };
     console.log('[KB] Global error handler registered');
+    
+    // 立即检查 KNOWLEDGE_BASE 是否存在（同步检查，在 DOM 准备好之前）
+    if (typeof KNOWLEDGE_BASE === 'undefined') {
+        document.title = '❌ 数据未加载 - 知识库';
+    } else {
+        console.log('[KB] KNOWLEDGE_BASE found immediately:', KNOWLEDGE_BASE.length);
+    }
+    
     // KNOWLEDGE_BASE 已移至外部文件 kb_data.js
 // ==================== 全局状态 ====================
     let currentFilter = { module: 'all', situation: 'all', type: 'all', search: '', category: 'all' };
