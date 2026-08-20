@@ -539,6 +539,15 @@ const KNOWLEDGE_BASE = [{"id":"mba-strategy-001","module":"mba","category":"战�
     </div>
     
     <script>
+    // 自愈代码：清除旧版 Service Worker 注册，防止旧缓存导致错误
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistration().then(function(reg) {
+        if (reg) {
+          console.log('[KB] 清除旧版 Service Worker 注册');
+          reg.unregister();
+        }
+      });
+    }
     console.log('[KB] Script parse start');
     window.onerror = function(msg, url, line, col, error) {
         var msgStr = String(msg || '').trim();
