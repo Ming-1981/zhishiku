@@ -1615,10 +1615,14 @@ ${detailsHtml ? detailsHtml : ''}
 
     // ===== Service Worker 注册（确保更新自动生效）=====
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js').then(reg => {
-            console.log('SW registered, checking for updates...');
-            reg.update(); // 主动检查新版本
-        }).catch(err => console.log('SW registration failed:', err));
+        try {
+            navigator.serviceWorker.register('./sw.js').then(reg => {
+                console.log('SW registered, checking for updates...');
+                reg.update(); // 主动检查新版本
+            }).catch(err => console.log('SW registration failed:', err));
+        } catch(e) {
+            console.log('SW registration blocked:', e.message);
+        }
     }
     console.log('[KB] Script fully parsed OK');
     </script>
