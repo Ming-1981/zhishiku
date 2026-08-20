@@ -539,14 +539,17 @@ const KNOWLEDGE_BASE = [{"id":"mba-strategy-001","module":"mba","category":"战�
 
     // ==================== 初始化 ====================
     document.addEventListener('DOMContentLoaded', function() {
-        try { buildSidebar(); } catch(e) { console.error('buildSidebar error:', e); }
-        try { renderCards(); } catch(e) { console.error('renderCards error:', e); }
-        try { updateStats(); } catch(e) { console.error('updateStats error:', e); }
+        console.log('[KB] DOMContentLoaded start');
+        try { buildSidebar(); console.log('[KB] buildSidebar done'); } catch(e) { console.error('[KB] buildSidebar error:', e); }
+        try { renderCards(); console.log('[KB] renderCards done'); } catch(e) { console.error('[KB] renderCards error:', e); }
+        try { updateStats(); console.log('[KB] updateStats done'); } catch(e) { console.error('[KB] updateStats error:', e); }
 
         // ===== 手机端汉堡菜单 =====
+        console.log('[KB] Setting up mobile toggle');
         const toggle = document.getElementById('mobileToggle');
         const sidebar = document.querySelector('.sidebar');
         const overlay = document.getElementById('sidebarOverlay');
+        console.log('[KB] toggle:', toggle, 'sidebar:', sidebar, 'overlay:', overlay);
 
         function openSidebar() {
             sidebar.classList.add('open');
@@ -591,6 +594,7 @@ const KNOWLEDGE_BASE = [{"id":"mba-strategy-001","module":"mba","category":"战�
     // ==================== 构建侧边栏 ====================
     function buildSidebar() {
         try {
+        console.log('[KB] buildSidebar start');
         // 模块导航
         const modules = ['mba', 'm360', 'opr', 'purchase', 'moh'];
         
@@ -674,9 +678,10 @@ const KNOWLEDGE_BASE = [{"id":"mba-strategy-001","module":"mba","category":"战�
     // ==================== 渲染卡片 ====================
     function renderCards() {
         try {
+        console.log('[KB] renderCards start, KNOWLEDGE_BASE length:', KNOWLEDGE_BASE.length);
         const grid = document.getElementById('cardsGrid');
         const emptyState = document.getElementById('emptyState');
-        if (!grid || !emptyState) return;
+        if (!grid || !emptyState) { console.error('[KB] grid or emptyState not found'); return; }
         
         let filtered = KNOWLEDGE_BASE.filter(item => {
             if (currentFilter.module !== 'all' && item.module !== currentFilter.module) return false;
@@ -697,6 +702,7 @@ const KNOWLEDGE_BASE = [{"id":"mba-strategy-001","module":"mba","category":"战�
             emptyState.style.display = 'flex';
         } else {
             emptyState.style.display = 'none';
+            console.log('[KB] Rendering', filtered.length, 'cards');
             grid.innerHTML = filtered.map(item => `
                 <div class="card ${item.module}" onclick="showDetail('${item.id}')">
                     <span class="card-badge ${item.module}">${getModuleName(item.module)}</span>
