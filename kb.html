@@ -541,6 +541,7 @@ const KNOWLEDGE_BASE = [{"id":"mba-strategy-001","module":"mba","category":"战�
     <script>
     console.log('[KB] Script parse start');
     window.onerror = function(msg, url, line, col, error) {
+        console.log('[KB] window.onerror fired:', JSON.stringify({msg: msg, line: line}));
         var msgStr = String(msg || '').trim();
         // 规则1：行号为0 → 跨域/系统错误，无法修复，直接屏蔽
         if (line === 0) {
