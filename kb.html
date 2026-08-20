@@ -498,6 +498,11 @@ const KNOWLEDGE_BASE = [{"id":"mba-strategy-001","module":"mba","category":"战�
                 </div>
             </div>
             
+            <!-- 初始化状态指示器（始终显示，方便调试） -->
+            <div id="initStatus" style="background:#f8f8f8;border:2px dashed #ccc;border-radius:8px;padding:16px;margin-bottom:16px;text-align:center;color:#666;font-size:14px;">
+                ⏳ 知识库初始化中...<br>
+                <small id="initStep" style="color:#999;font-size:12px;">请稍候</small>
+            </div>
             <div id="debugLog" style="background:#1a1a2e;color:#0f0;padding:10px;font-family:monospace;font-size:12px;max-height:200px;overflow:auto;margin-bottom:10px;border-radius:8px;display:none;"></div>
             <div id="cardsGrid" class="cards-grid"></div>
             <div id="emptyState" class="empty-state" style="display:none;">
@@ -555,47 +560,105 @@ const KNOWLEDGE_BASE = [{"id":"mba-strategy-001","module":"mba","category":"战�
     let currentFilter = { module: 'all', situation: 'all', type: 'all', search: '', category: 'all' };
 
     // ==================== 初始化 ====================
-    document.addEventListener('DOMContentLoaded', function() {
-        // 检查数据是否加载
+    function updateInitStatus(step, detail) {
+        var el = document.getElementById('initStep');
+        if (el) el.textContent = step;
+        console.log('[KB Init]', step, detail || '');
+    }
+    function hideInitStatus() {
+        var el = document.getElementById('initStatus');
+        if (el) el.style.display = 'none';
+    }
+    
+    function initApp() {
+        updateInitStatus('检查数据...');
+        
         if (typeof KNOWLEDGE_BASE === 'undefined' || !KNOWLEDGE_BASE || KNOWLEDGE_BASE.length === 0) {
-            const grid = document.getElementById('cardsGrid');
+            var grid = document.getElementById('cardsGrid');
             if (grid) grid.innerHTML = '<div style="padding:40px;text-align:center;color:#ef4444;font-size:16px;">⚠️ 数据加载失败，请刷新重试<br><br><button onclick="location.reload()" style="padding:10px 20px;background:#3b82f6;color:white;border:none;border-radius:8px;cursor:pointer;">刷新页面</button></div>';
+            updateInitStatus('❌ 数据未定义', 'KNOWLEDGE_BASE 是 undefined');
             return;
         }
-        console.log('[KB] DOMContentLoaded start, KNOWLEDGE_BASE:', KNOWLEDGE_BASE.length, 'items');
         
-        // 进度指示器（调试用）
-        const debugEl = document.getElementById('debugLog');
-        function log(msg) { console.log(msg); if (debugEl) debugEl.innerHTML += '<div>' + msg + '</div>'; }
+        updateInitStatus('构建侧边栏...', KNOWLEDGE_BASE.length + ' 条数据');
         
-        try { 
-            buildSidebar(); 
-            log('✅ buildSidebar 完成'); 
-        } catch(e) { 
-            log('❌ buildSidebar 错误: ' + e.message); 
-            console.error('[KB] buildSidebar error:', e); 
+        var debugEl = document.getElementById('debugLog');
+        function log(msg) { console.log('[KB]', msg); if (debugEl) debugEl.innerHTML += '<div>' + msg + '</div>'; }
+        
+        try {
+            buildSidebar();
+            log('✅ buildSidebar 完成');
+            updateInitStatus('构建侧边栏完成', '✅');
+        } catch(e) {
+            log('❌ buildSidebar 错误: ' + e.message);
+            console.error('[KB] buildSidebar error:', e);
+            updateInitStatus('❌ buildSidebar 失败', e.message);
         }
-        try { 
-            renderCards(); 
-            log('✅ renderCards 完成，卡片数: ' + document.querySelectorAll('.card').length); 
-        } catch(e) { 
-            log('❌ renderCards 错误: ' + e.message); 
-            console.error('[KB] renderCards error:', e); 
+        
+        try {
+            renderCards();
+            var cardCount = document.querySelectorAll('.card').length;
+            log('✅ renderCards 完成，卡片数: ' + cardCount);
+            updateInitStatus('渲染卡片完成', cardCount + ' 张卡片');
+        } catch(e) {
+            log('❌ renderCards 错误: ' + e.message);
+            console.error('[KB] renderCards error:', e);
+            updateInitStatus('❌ renderCards 失败', e.message);
         }
-        try { 
-            updateStats(); 
-            log('✅ updateStats 完成'); 
-        } catch(e) { 
-            log('❌ updateStats 错误: ' + e.message); 
-            console.error('[KB] updateStats error:', e); 
+        
+        try {
+            updateStats();
+            log('✅ updateStats 完成');
+        } catch(e) {
+            log('❌ updateStats 错误: ' + e.message);
+            console.error('[KB] updateStats error:', e);
         }
-        if (debugEl) debugEl.innerHTML += '<hr>';
-
-        // ===== 手机端汉堡菜单 =====
+        
+        var cardCount = document.querySelectorAll('.card').length;
+        if (cardCount > 0) {
+            hideInitStatus();
+        } else {
+            updateInitStatus('⚠️ 初始化完成但无卡片', 'cardCount=' + cardCount);
+        }
+        
+        // 设置手机端汉堡菜单
+        setupMobileToggle();
+        
+        if (debugEl) debugEl.style.display = 'block';
+    }
+    
+    // DOMContentLoaded
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('[KB] DOMContentLoaded fired!');
+        initApp();
+    });
+    
+    // 备用：window.onload
+    window.addEventListener('load', function() {
+        console.log('[KB] window.load fired!');
+        setTimeout(function() {
+            if (document.querySelectorAll('.card').length === 0) {
+                console.log('[KB] Fallback initApp (window.load)');
+                initApp();
+            }
+        }, 100);
+    });
+    
+    // 超时强制初始化
+    setTimeout(function() {
+        console.log('[KB] Timeout check, cards:', document.querySelectorAll('.card').length);
+        if (document.querySelectorAll('.card').length === 0) {
+            console.log('[KB] Timeout! Calling initApp as last resort');
+            initApp();
+        }
+    }, 3000);
+    
+    // ===== 手机端汉堡菜单（延迟执行以确保 DOM 就绪）=====
+    function setupMobileToggle() {
         console.log('[KB] Setting up mobile toggle');
-        const toggle = document.getElementById('mobileToggle');
-        const sidebar = document.querySelector('.sidebar');
-        const overlay = document.getElementById('sidebarOverlay');
+        var toggle = document.getElementById('mobileToggle');
+        var sidebar = document.querySelector('.sidebar');
+        var overlay = document.getElementById('sidebarOverlay');
         console.log('[KB] toggle:', toggle, 'sidebar:', sidebar, 'overlay:', overlay);
 
         function openSidebar() {
@@ -630,7 +693,16 @@ const KNOWLEDGE_BASE = [{"id":"mba-strategy-001","module":"mba","category":"战�
                     closeSidebar();
                 }
             });
+            console.log('[KB] Mobile toggle setup complete');
         }
+    }
+    
+    // DOMContentLoaded 后设置汉堡菜单
+    document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(setupMobileToggle, 100);
+    });
+    window.addEventListener('load', function() {
+        setTimeout(setupMobileToggle, 100);
     });
 
     // ==================== 全局模块配置 ====================
