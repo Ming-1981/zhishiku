@@ -556,8 +556,13 @@ const KNOWLEDGE_BASE = [{"id":"mba-strategy-001","module":"mba","category":"战�
     }
     
     // KNOWLEDGE_BASE 已移至外部文件 kb_data.js
-// ==================== 全局状态 ====================
+    // ==================== 全局状态 ====================
     let currentFilter = { module: 'all', situation: 'all', type: 'all', search: '', category: 'all' };
+
+    // ==================== 全局模块配置 ====================
+    const MODULE_NAMES = {mba: '企业战略与决策', m360: '精益制造', opr: '流程改进', purchase: '采购供应链', moh: '成本会计'};
+    const MODULE_ICONS = {mba: '🎓', m360: '🏭', opr: '⚙️', purchase: '🛒', moh: '💰'};
+    const MODULE_COLORS = {mba: '3B82F6', m360: '10B981', opr: '8B5CF6', purchase: 'F59E0B', moh: 'EF4444', all: '2563EB'};
 
     // ==================== 初始化 ====================
     function updateInitStatus(step, detail) {
@@ -687,11 +692,6 @@ const KNOWLEDGE_BASE = [{"id":"mba-strategy-001","module":"mba","category":"战�
     window.addEventListener('load', function() {
         setTimeout(setupMobileToggle, 100);
     });
-
-    // ==================== 全局模块配置 ====================
-    const MODULE_NAMES = {mba: '企业战略与决策', m360: '精益制造', opr: '流程改进', purchase: '采购供应链', moh: '成本会计'};
-    const MODULE_ICONS = {mba: '🎓', m360: '🏭', opr: '⚙️', purchase: '🛒', moh: '💰'};
-    const MODULE_COLORS = {mba: '3B82F6', m360: '10B981', opr: '8B5CF6', purchase: 'F59E0B', moh: 'EF4444', all: '2563EB'};
 
     // ==================== 构建侧边栏 ====================
     function buildSidebar() {
