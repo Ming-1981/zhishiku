@@ -561,12 +561,11 @@ const KNOWLEDGE_BASE = [{"id":"mba-strategy-001","module":"mba","category":"战�
 
     // ==================== 初始化 ====================
     function updateInitStatus(step, detail) {
-        var el = document.getElementById('initStep');
-        if (el) el.textContent = step + (detail ? ' - ' + detail : '');
-        console.log('[KB Init]', step, detail || '');
-        // 同步写入，让 iOS Safari 能看到
         var statusEl = document.getElementById('initStatus');
-        if (statusEl) statusEl.innerHTML = '<div style="font-size:16px;margin-bottom:8px;">' + step + '</div><div style="color:#888;font-size:12px;">' + (detail || '') + '</div>';
+        if (statusEl) {
+            statusEl.innerHTML = '<div style="font-size:16px;margin-bottom:8px;">' + step + '</div><div style="color:#888;font-size:12px;">' + (detail || '') + '</div>';
+        }
+        console.log('[KB Init]', step, detail || '');
     }
     function hideInitStatus() {
         var el = document.getElementById('initStatus');
@@ -575,94 +574,67 @@ const KNOWLEDGE_BASE = [{"id":"mba-strategy-001","module":"mba","category":"战�
     
     function initApp() {
         console.log('[KB] initApp() CALLED');
-        var statusEl = document.getElementById('initStatus');
-        if (statusEl) statusEl.innerHTML = '<div style="font-size:16px;color:#f59e0b;">🔥 initApp 开始</div>';
         
-        try {
-            updateInitStatus('检查数据...', typeof KNOWLEDGE_BASE);
-            console.log('[KB] KNOWLEDGE_BASE check:', typeof KNOWLEDGE_BASE, KNOWLEDGE_BASE ? KNOWLEDGE_BASE.length : 'N/A');
-        } catch(e) {
-            console.error('[KB] Step1 error:', e);
-            if (statusEl) statusEl.innerHTML += '<div style="color:red">❌ Step1 失败: ' + e.message + '</div>';
+        // 检查数据
+        if (typeof KNOWLEDGE_BASE === 'undefined') {
+            var grid = document.getElementById('cardsGrid');
+            if (grid) grid.innerHTML = '<div style="padding:40px;text-align:center;color:#ef4444;">⚠️ 数据加载失败，请刷新重试</div>';
+            updateInitStatus('❌ 数据未定义', 'KNOWLEDGE_BASE 是 undefined');
+            return;
         }
         
-        try {
-            if (typeof KNOWLEDGE_BASE === 'undefined') {
-                var grid = document.getElementById('cardsGrid');
-                if (grid) grid.innerHTML = '<div style="padding:40px;text-align:center;color:#ef4444;font-size:16px;">⚠️ 数据加载失败，请刷新重试<br><br><button onclick="location.reload()" style="padding:10px 20px;background:#3b82f6;color:white;border:none;border-radius:8px;cursor:pointer;">刷新页面</button></div>';
-                updateInitStatus('❌ 数据未定义', '请刷新');
-                return;
-            }
-        } catch(e) {
-            console.error('[KB] Step2 error:', e);
-            if (statusEl) statusEl.innerHTML += '<div style="color:red">❌ Step2 失败: ' + e.message + '</div>';
-        }
+        updateInitStatus('构建侧边栏...', KNOWLEDGE_BASE.length + ' 条数据');
+        try { buildSidebar(); } catch(e) { console.error('[KB] buildSidebar error:', e); updateInitStatus('❌ 侧边栏失败', e.message); }
         
-        try {
-            updateInitStatus('构建侧边栏...', KNOWLEDGE_BASE.length + ' 条数据');
-            buildSidebar();
-            console.log('[KB] buildSidebar done');
-            updateInitStatus('✅ 侧边栏完成');
-        } catch(e) {
-            console.error('[KB] Step3(buildSidebar) error:', e);
-            if (statusEl) statusEl.innerHTML += '<div style="color:red">❌ 侧边栏失败: ' + e.message + '</div>';
-        }
+        updateInitStatus('渲染卡片...');
+        try { renderCards(); } catch(e) { console.error('[KB] renderCards error:', e); updateInitStatus('❌ renderCards 失败', e.message); }
         
-        try {
-            renderCards();
-            var cardCount = document.querySelectorAll('.card').length;
-            console.log('[KB] renderCards done, cards:', cardCount);
-            updateInitStatus('✅ 渲染卡片完成', cardCount + ' 张');
-        } catch(e) {
-            console.error('[KB] Step4(renderCards) error:', e);
-            if (statusEl) statusEl.innerHTML += '<div style="color:red">❌ renderCards 失败: ' + e.message + '</div>';
-        }
-        
-        try {
-            updateStats();
-            console.log('[KB] updateStats done');
-        } catch(e) {
-            console.error('[KB] Step5(updateStats) error:', e);
-        }
+        try { updateStats(); } catch(e) { console.error('[KB] updateStats error:', e); }
         
         var cardCount = document.querySelectorAll('.card').length;
         if (cardCount > 0) {
             hideInitStatus();
+            console.log('[KB] initApp() SUCCESS, cards:', cardCount);
+        } else {
+            updateInitStatus('⚠️ 无卡片', 'cardCount=' + cardCount);
         }
         
-        setupMobileToggle();
+        try { setupMobileToggle(); } catch(e) { console.error('[KB] setupMobileToggle error:', e); }
         
         var debugEl = document.getElementById('debugLog');
         if (debugEl) debugEl.style.display = 'block';
-        
-        console.log('[KB] initApp() COMPLETE, cards:', cardCount);
     }
     
-    // DOMContentLoaded
-    document.addEventListener('DOMContentLoaded', function() {
-        console.log('[KB] DOMContentLoaded fired!');
-        initApp();
-    });
-    
-    // 备用：window.onload
-    window.addEventListener('load', function() {
-        console.log('[KB] window.load fired!');
-        setTimeout(function() {
-            if (document.querySelectorAll('.card').length === 0) {
-                console.log('[KB] Fallback initApp (window.load)');
-                initApp();
-            }
-        }, 100);
-    });
-    
-    // 超时强制初始化（最后防线）
-    setTimeout(function() {
-        console.log('[KB] Timeout check, cards:', document.querySelectorAll('.card').length);
-        if (document.querySelectorAll('.card').length === 0) {
-            console.log('[KB] Timeout! Calling initApp as last resort');
+    // ===== 核心策略：直接同步尝试，不等待任何事件 =====
+    // 绝大多数情况下 script 标签解析到此处时，DOM 已完全构建
+    function tryInit() {
+        var grid = document.getElementById('cardsGrid');
+        if (grid) {
+            console.log('[KB] DOM already ready (grid exists), calling initApp synchronously');
             initApp();
+            return true;
         }
-    }, 3000);
+        return false;
+    }
+    
+    if (!tryInit()) {
+        // DOM 还没好，等 DOMContentLoaded
+        console.log('[KB] DOM not ready, waiting for DOMContentLoaded');
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('[KB] DOMContentLoaded fired!');
+            initApp();
+        });
+        // 备用 window.load
+        window.addEventListener('load', function() {
+            console.log('[KB] window.load fired!');
+            if (document.querySelectorAll('.card').length === 0) initApp();
+        });
+        // 超时强制
+        setTimeout(function() {
+            console.log('[KB] Timeout check, cards:', document.querySelectorAll('.card').length);
+            if (document.querySelectorAll('.card').length === 0) initApp();
+        }, 3000);
+    }
     
     // ===== 手机端汉堡菜单（延迟执行以确保 DOM 就绪）=====
     function setupMobileToggle() {
