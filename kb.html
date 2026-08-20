@@ -541,6 +541,11 @@ const KNOWLEDGE_BASE = [{"id":"mba-strategy-001","module":"mba","category":"战�
     <script>
     console.log('[KB] Script parse start');
     window.onerror = function(msg, url, line, col, error) {
+        // 忽略跨域 "Script error"（Service Worker 在 iOS Safari 失败时触发，行号始终为0，无法修复直接屏蔽）
+        if (msg === 'Script error.' && line === 0) {
+            console.log('[KB] Ignoring cross-origin Script error from SW registration');
+            return true;
+        }
         console.error('[KB] GLOBAL ERROR:', msg, 'at line', line, 'col', col);
         var grid = document.getElementById('cardsGrid');
         if (grid) grid.innerHTML = '<div style="padding:40px;text-align:center;color:#ef4444;">❌ JS错误: ' + msg + '<br><small>行号:' + line + '</small><br><button onclick="location.reload()" style="margin-top:10px;padding:8px 16px;background:#3b82f6;color:white;border:none;border-radius:6px;cursor:pointer;">刷新</button></div>';
