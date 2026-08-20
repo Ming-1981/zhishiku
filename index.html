@@ -45,8 +45,10 @@
         .content-header h1 { font-size: 28px; margin-bottom: 8px; }
         .content-header p { color: #64748b; font-size: 14px; }
         
-        .stats-bar { display: flex; gap: 20px; margin-bottom: 30px; flex-wrap: wrap; }
-        .stat-item { background: white; padding: 14px 16px 10px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); text-align: center; min-width: 110px; display: flex; flex-direction: column; align-items: center; gap: 4px; border-left: 4px solid transparent; transition: all 0.2s; }
+        .stats-bar { display: flex; gap: 20px; margin-bottom: 20px; flex-wrap: wrap; }
+        .stats-bar-top { margin-bottom: 12px; }
+        .stats-bar-top .stat-item { min-width: auto; flex: 1; max-width: calc(50% - 10px); }
+        .stat-item { background: white; padding: 14px 16px 10px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); text-align: center; min-width: 105px; display: flex; flex-direction: column; align-items: center; gap: 4px; border-left: 4px solid transparent; transition: all 0.2s; }
         .stat-item:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.1); transform: translateY(-1px); }
         .stat-value { font-size: 26px; font-weight: bold; color: #1e3a5f; line-height: 1; display: flex; align-items: center; gap: 4px; }
         .stat-label { font-size: 11px; color: #64748b; }
@@ -185,7 +187,13 @@
             .sidebar-overlay.show { display: block; }
             .sidebar { width: 280px; transform: translateX(-100%); transition: transform 0.3s ease; z-index: 1000; }
             .sidebar.open { transform: translateX(0); }
-            .main { margin-left: 0; padding: 16px; padding-top: 70px; }
+            .main { margin-left: 0; padding: 12px 16px; }
+            /* 整个头部 sticky 固定，滑动时汉堡按钮始终可见 */
+            .content-header { position: sticky; top: 0; z-index: 999; background: #f5f7fa !important; padding: 10px 0 8px 70px !important; margin-bottom: 12px; }
+            .content-header h1 { font-size: 18px !important; margin-bottom: 4px; }
+            .content-header p { font-size: 11px !important; color: #64748b; }
+            .stats-bar-top .stat-item { min-width: calc(50% - 4px) !important; max-width: none !important; flex: none !important; }
+            .stats-bar-modules .stat-item { min-width: calc(33.33% - 6px) !important; }
             .cards-grid { grid-template-columns: 1fr !important; }
             .card { width: 100% !important; max-width: 100% !important; padding: 16px !important; margin-bottom: 0 !important; }
             .card-badge { font-size: 9px !important; padding: 2px 6px !important; top: 10px !important; right: 10px !important; }
@@ -195,7 +203,7 @@
             .card-tags-row { gap: 3px !important; }
             .card-tag { font-size: 9px !important; padding: 2px 6px !important; }
             .stats-bar { gap: 8px; }
-            .stat-item { min-width: calc(33.33% - 8px) !important; padding: 10px 6px !important; }
+            .stat-item { min-width: calc(50% - 4px) !important; padding: 10px 6px !important; }
             .stat-value { font-size: 20px !important; }
             .stat-label { font-size: 10px !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
             .filter-bar { flex-direction: column; align-items: stretch; gap: 8px; padding: 12px; }
@@ -207,21 +215,21 @@
             .export-card { min-width: 100% !important; padding: 12px !important; }
             .export-card .card-title { font-size: 13px !important; }
             .modal-content { margin: 10px; padding: 16px; max-height: 90vh; overflow-y: auto; }
-            .content-header h1 { font-size: 20px; }
-            .sidebar-title { font-size: 16px; padding-left: 60px; }
+            .sidebar-title { font-size: 16px; padding-left: 0; }
             .cards-grid { gap: 10px; }
         }
         @media (max-width: 480px) {
-            .main { padding: 12px; padding-top: 70px; }
-            .content-header h1 { font-size: 18px; }
-            .content-header p { font-size: 12px; line-height: 1.5; }
-            .stat-item { min-width: calc(33.33% - 6px) !important; padding: 8px 4px !important; }
+            .main { padding: 10px 12px; }
+            .content-header { padding: 8px 0 6px 70px !important; }
+            .content-header h1 { font-size: 16px !important; }
+            .content-header p { font-size: 10px !important; color: #64748b; }
+            .stat-item { min-width: calc(50% - 3px) !important; padding: 8px 4px !important; }
             .stat-value { font-size: 18px !important; }
             .stat-label { font-size: 9px !important; }
             .card { padding: 14px 12px !important; }
             .card-title { font-size: 14px !important; }
             .card-source { font-size: 9px !important; margin-bottom: 6px !important; }
-            .card-desc { display: none !important; }
+            .card-desc { font-size: 11px !important; -webkit-line-clamp: 2 !important; display: -webkit-box !important; }
             .filter-bar { padding: 10px; gap: 6px; }
             .filter-label { font-size: 11px; }
         }
@@ -434,10 +442,6 @@ const KNOWLEDGE_BASE = [{"id":"mba-strategy-001","module":"mba","category":"战�
 </script>
 </head>
 <body>
-    <!-- 手机端汉堡菜单按钮 -->
-    <button class="mobile-toggle" id="mobileToggle" aria-label="打开菜单">
-        <span></span><span></span><span></span>
-    </button>
     <!-- 手机端侧边栏遮罩 -->
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
@@ -456,12 +460,16 @@ const KNOWLEDGE_BASE = [{"id":"mba-strategy-001","module":"mba","category":"战�
         </aside>
         
         <main class="main">
-            <div class="content-header">
+            <div class="content-header" id="contentHeader">
+                <button class="mobile-toggle" id="mobileToggle" aria-label="打开菜单">
+                    <span></span><span></span><span></span>
+                </button>
                 <h1 id="contentTitle">📚 知识库首页</h1>
                 <p id="contentDesc">涵盖企业战略与决策、精益制造、流程改进、采购供应链等多个领域的知识与方法论</p>
             </div>
             
-            <div class="stats-bar" id="statsBar"></div>
+            <div class="stats-bar stats-bar-top" id="statsBar"></div>
+            <div class="stats-bar stats-bar-modules" id="statsBar2"></div>
             
             <div class="filter-bar">
                 <div class="filter-group">
@@ -490,6 +498,12 @@ const KNOWLEDGE_BASE = [{"id":"mba-strategy-001","module":"mba","category":"战�
                 </div>
             </div>
             
+            <!-- 初始化状态指示器（始终显示，方便调试） -->
+            <div id="initStatus" style="background:#f8f8f8;border:2px dashed #ccc;border-radius:8px;padding:16px;margin-bottom:16px;text-align:center;color:#666;font-size:14px;">
+                ⏳ 知识库初始化中...<br>
+                <small id="initStep" style="color:#999;font-size:12px;">请稍候</small>
+            </div>
+            <div id="debugLog" style="background:#1a1a2e;color:#0f0;padding:10px;font-family:monospace;font-size:12px;max-height:200px;overflow:auto;margin-bottom:10px;border-radius:8px;display:none;"></div>
             <div id="cardsGrid" class="cards-grid"></div>
             <div id="emptyState" class="empty-state" style="display:none;">
                 <div class="icon">📭</div>
@@ -525,20 +539,121 @@ const KNOWLEDGE_BASE = [{"id":"mba-strategy-001","module":"mba","category":"战�
     </div>
     
     <script>
+    console.log('[KB] Script parse start');
+    window.onerror = function(msg, url, line, col, error) {
+        var msgStr = String(msg || '').trim();
+        console.log('[KB] window.onerror fired:', {msg: msgStr, line: line, col: col});
+        // 规则1：行号为0 → 跨域/系统错误，无法修复，直接屏蔽
+        if (line === 0) { return true; }
+        // 规则2：消息含 "script error"（大小写不敏感）→ 跨域脚本错误，屏蔽
+        if (msgStr.toLowerCase().includes('script error')) { return true; }
+        // 其他错误显示友好界面（仅用于真实开发调试，这个分支永远不应该触发）
+        var grid = document.getElementById('cardsGrid');
+        if (grid) grid.innerHTML = '<div style="padding:40px;text-align:center;color:#ef4444;">❌ JS错误: ' + msgStr + '<br><small>行号:' + line + '</small><br><button onclick="location.reload()" style="margin-top:10px;padding:8px 16px;background:#3b82f6;color:white;border:none;border-radius:6px;cursor:pointer;">刷新</button></div>';
+        return true;
+    };
+    console.log('[KB] Global error handler registered');
+    
+    // 立即检查 KNOWLEDGE_BASE 是否存在（同步检查，在 DOM 准备好之前）
+    if (typeof KNOWLEDGE_BASE === 'undefined') {
+        document.title = '❌ 数据未加载 - 知识库';
+    } else {
+        console.log('[KB] KNOWLEDGE_BASE found immediately:', KNOWLEDGE_BASE.length);
+    }
+    
     // KNOWLEDGE_BASE 已移至外部文件 kb_data.js
-// ==================== 全局状态 ====================
+    // ==================== 全局状态 ====================
     let currentFilter = { module: 'all', situation: 'all', type: 'all', search: '', category: 'all' };
 
-    // ==================== 初始化 ====================
-    document.addEventListener('DOMContentLoaded', function() {
-        buildSidebar();
-        renderCards();
-        updateStats();
+    // ==================== 全局模块配置 ====================
+    const MODULE_NAMES = {mba: '企业战略与决策', m360: '精益制造', opr: '流程改进', purchase: '采购供应链', moh: '成本会计'};
+    const MODULE_ICONS = {mba: '🎓', m360: '🏭', opr: '⚙️', purchase: '🛒', moh: '💰'};
+    const MODULE_COLORS = {mba: '3B82F6', m360: '10B981', opr: '8B5CF6', purchase: 'F59E0B', moh: 'EF4444', all: '2563EB'};
 
-        // ===== 手机端汉堡菜单 =====
-        const toggle = document.getElementById('mobileToggle');
-        const sidebar = document.querySelector('.sidebar');
-        const overlay = document.getElementById('sidebarOverlay');
+    // ==================== 初始化 ====================
+    function updateInitStatus(step, detail) {
+        var statusEl = document.getElementById('initStatus');
+        if (statusEl) {
+            statusEl.innerHTML = '<div style="font-size:16px;margin-bottom:8px;">' + step + '</div><div style="color:#888;font-size:12px;">' + (detail || '') + '</div>';
+        }
+        console.log('[KB Init]', step, detail || '');
+    }
+    function hideInitStatus() {
+        var el = document.getElementById('initStatus');
+        if (el) el.style.display = 'none';
+    }
+    
+    function initApp() {
+        console.log('[KB] initApp() CALLED');
+        
+        // 检查数据
+        if (typeof KNOWLEDGE_BASE === 'undefined') {
+            var grid = document.getElementById('cardsGrid');
+            if (grid) grid.innerHTML = '<div style="padding:40px;text-align:center;color:#ef4444;">⚠️ 数据加载失败，请刷新重试</div>';
+            updateInitStatus('❌ 数据未定义', 'KNOWLEDGE_BASE 是 undefined');
+            return;
+        }
+        
+        updateInitStatus('构建侧边栏...', KNOWLEDGE_BASE.length + ' 条数据');
+        try { buildSidebar(); } catch(e) { console.error('[KB] buildSidebar error:', e); updateInitStatus('❌ 侧边栏失败', e.message); }
+        
+        updateInitStatus('渲染卡片...');
+        try { renderCards(); } catch(e) { console.error('[KB] renderCards error:', e); updateInitStatus('❌ renderCards 失败', e.message); }
+        
+        try { updateStats(); } catch(e) { console.error('[KB] updateStats error:', e); }
+        
+        var cardCount = document.querySelectorAll('.card').length;
+        if (cardCount > 0) {
+            hideInitStatus();
+            console.log('[KB] initApp() SUCCESS, cards:', cardCount);
+        } else {
+            updateInitStatus('⚠️ 无卡片', 'cardCount=' + cardCount);
+        }
+        
+        try { setupMobileToggle(); } catch(e) { console.error('[KB] setupMobileToggle error:', e); }
+        
+        var debugEl = document.getElementById('debugLog');
+        if (debugEl) debugEl.style.display = 'block';
+    }
+    
+    // ===== 核心策略：直接同步尝试，不等待任何事件 =====
+    // 绝大多数情况下 script 标签解析到此处时，DOM 已完全构建
+    function tryInit() {
+        var grid = document.getElementById('cardsGrid');
+        if (grid) {
+            console.log('[KB] DOM already ready (grid exists), calling initApp synchronously');
+            initApp();
+            return true;
+        }
+        return false;
+    }
+    
+    if (!tryInit()) {
+        // DOM 还没好，等 DOMContentLoaded
+        console.log('[KB] DOM not ready, waiting for DOMContentLoaded');
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('[KB] DOMContentLoaded fired!');
+            initApp();
+        });
+        // 备用 window.load
+        window.addEventListener('load', function() {
+            console.log('[KB] window.load fired!');
+            if (document.querySelectorAll('.card').length === 0) initApp();
+        });
+        // 超时强制
+        setTimeout(function() {
+            console.log('[KB] Timeout check, cards:', document.querySelectorAll('.card').length);
+            if (document.querySelectorAll('.card').length === 0) initApp();
+        }, 3000);
+    }
+    
+    // ===== 手机端汉堡菜单（延迟执行以确保 DOM 就绪）=====
+    function setupMobileToggle() {
+        console.log('[KB] Setting up mobile toggle');
+        var toggle = document.getElementById('mobileToggle');
+        var sidebar = document.querySelector('.sidebar');
+        var overlay = document.getElementById('sidebarOverlay');
+        console.log('[KB] toggle:', toggle, 'sidebar:', sidebar, 'overlay:', overlay);
 
         function openSidebar() {
             sidebar.classList.add('open');
@@ -572,16 +687,22 @@ const KNOWLEDGE_BASE = [{"id":"mba-strategy-001","module":"mba","category":"战�
                     closeSidebar();
                 }
             });
+            console.log('[KB] Mobile toggle setup complete');
         }
+    }
+    
+    // DOMContentLoaded 后设置汉堡菜单
+    document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(setupMobileToggle, 100);
     });
-
-    // ==================== 全局模块配置 ====================
-    const MODULE_NAMES = {mba: '企业战略与决策', m360: '精益制造', opr: '流程改进', purchase: '采购供应链', moh: '成本会计'};
-    const MODULE_ICONS = {mba: '🎓', m360: '🏭', opr: '⚙️', purchase: '🛒', moh: '💰'};
-    const MODULE_COLORS = {mba: '3B82F6', m360: '10B981', opr: '8B5CF6', purchase: 'F59E0B', moh: 'EF4444', all: '2563EB'};
+    window.addEventListener('load', function() {
+        setTimeout(setupMobileToggle, 100);
+    });
 
     // ==================== 构建侧边栏 ====================
     function buildSidebar() {
+        try {
+        console.log('[KB] buildSidebar start');
         // 模块导航
         const modules = ['mba', 'm360', 'opr', 'purchase', 'moh'];
         
@@ -619,6 +740,7 @@ const KNOWLEDGE_BASE = [{"id":"mba-strategy-001","module":"mba","category":"战�
         });
         catHtml += '</div>';
         document.getElementById('nav-categories').innerHTML = catHtml;
+        } catch(e) { console.error('buildSidebar error:', e); }
     }
 
     // ==================== 筛选逻辑 ====================
@@ -663,8 +785,11 @@ const KNOWLEDGE_BASE = [{"id":"mba-strategy-001","module":"mba","category":"战�
 
     // ==================== 渲染卡片 ====================
     function renderCards() {
+        try {
+        console.log('[KB] renderCards start, KNOWLEDGE_BASE length:', KNOWLEDGE_BASE.length);
         const grid = document.getElementById('cardsGrid');
         const emptyState = document.getElementById('emptyState');
+        if (!grid || !emptyState) { console.error('[KB] grid or emptyState not found'); return; }
         
         let filtered = KNOWLEDGE_BASE.filter(item => {
             if (currentFilter.module !== 'all' && item.module !== currentFilter.module) return false;
@@ -685,6 +810,7 @@ const KNOWLEDGE_BASE = [{"id":"mba-strategy-001","module":"mba","category":"战�
             emptyState.style.display = 'flex';
         } else {
             emptyState.style.display = 'none';
+            console.log('[KB] Rendering', filtered.length, 'cards');
             grid.innerHTML = filtered.map(item => `
                 <div class="card ${item.module}" onclick="showDetail('${item.id}')">
                     <span class="card-badge ${item.module}">${getModuleName(item.module)}</span>
@@ -692,7 +818,7 @@ const KNOWLEDGE_BASE = [{"id":"mba-strategy-001","module":"mba","category":"战�
                         <span class="card-icon">${item.icon}</span>
                         <h3 class="card-title">${item.title}</h3>
                     </div>
-                    <div class="card-source">📚 ${item.source}</div>
+                    <div class="card-source">📖 ${(item.subtitle || item.description || item.source).substring(0, 42)}${(item.subtitle || item.description || '').length > 42 ? '…' : ''}</div>
                     <p class="card-desc">${item.description}</p>
                     <div class="card-footer">
                         <div class="card-tags-row">
@@ -706,6 +832,7 @@ const KNOWLEDGE_BASE = [{"id":"mba-strategy-001","module":"mba","category":"战�
                 </div>
             `).join('');
         }
+        } catch(e) { console.error('renderCards error:', e); }
     }
 
     function getModuleName(m) {
@@ -832,6 +959,7 @@ const KNOWLEDGE_BASE = [{"id":"mba-strategy-001","module":"mba","category":"战�
 
     // ==================== 统计更新 ====================
     function updateStats() {
+        try {
         const total = KNOWLEDGE_BASE.length;
         const filtered = KNOWLEDGE_BASE.filter(item => {
             if (currentFilter.module !== 'all' && item.module !== currentFilter.module) return false;
@@ -853,7 +981,9 @@ const KNOWLEDGE_BASE = [{"id":"mba-strategy-001","module":"mba","category":"战�
             <div class="stat-item module-all" onclick="downloadPDF('all')" title="导出全部63条知识">
                 <div class="stat-value">📥 导出</div>
                 <div class="stat-label">全部63条</div>
-            </div>
+            </div>`;
+
+        document.getElementById('statsBar2').innerHTML = `
             <div class="stat-item module-mba">
                 <div class="stat-value" style="color:#3b82f6"><span class="stat-icon">📋</span>${moduleCounts.mba}</div>
                 <div class="stat-label">企业战略与决策</div>
@@ -895,6 +1025,7 @@ const KNOWLEDGE_BASE = [{"id":"mba-strategy-001","module":"mba","category":"战�
                 </div>
             </div>
         `;
+        } catch(e) { console.error('updateStats error:', e); }
     }
 
     // ==================== PDF导出 ====================
@@ -1156,7 +1287,7 @@ const KNOWLEDGE_BASE = [{"id":"mba-strategy-001","module":"mba","category":"战�
     .page-header { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   }
 </style>
-</head>
+</` + `head>
 <body>
 <div class="page-header">
   <h1>📚 ${moduleName}</h1>
@@ -1170,7 +1301,7 @@ ${cardsHtml}
 <div class="page-footer">
   综合知识库 · 共 ${total} 条知识方法论 · 武汉大学MBA学习资料
 </div>
-</body>
+</` + `body>
 </html>`;
 
         const win = window.open('', '_blank');
@@ -1293,7 +1424,7 @@ ${cardsHtml}
   .footer { text-align: center; font-size: 11px; color: #94a3b8; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e2e8f0; }
   @media print { body { padding: 20px; } .section { break-inside: avoid; } }
 </style>
-</head>
+</` + `head>
 <body>
 <div class="header">
   <div class="header-icon">${item.icon}</div>
@@ -1319,7 +1450,7 @@ ${detailsHtml ? detailsHtml : ''}
 <div class="footer">
   综合知识库 · 武汉大学MBA学习资料 · ${item.id}
 </div>
-</body>
+</` + `body>
 </html>`;
 
         const win = window.open('', '_blank');
@@ -1487,6 +1618,8 @@ ${detailsHtml ? detailsHtml : ''}
         };
         document.head.appendChild(script);
     }
+
+    console.log('[KB] Script fully parsed OK');
     </script>
 </body>
 </html>
