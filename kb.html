@@ -537,9 +537,9 @@ const KNOWLEDGE_BASE = [{"id":"mba-strategy-001","module":"mba","category":"战�
 
     // ==================== 初始化 ====================
     document.addEventListener('DOMContentLoaded', function() {
-        buildSidebar();
-        renderCards();
-        updateStats();
+        try { buildSidebar(); } catch(e) { console.error('buildSidebar error:', e); }
+        try { renderCards(); } catch(e) { console.error('renderCards error:', e); }
+        try { updateStats(); } catch(e) { console.error('updateStats error:', e); }
 
         // ===== 手机端汉堡菜单 =====
         const toggle = document.getElementById('mobileToggle');
@@ -588,6 +588,7 @@ const KNOWLEDGE_BASE = [{"id":"mba-strategy-001","module":"mba","category":"战�
 
     // ==================== 构建侧边栏 ====================
     function buildSidebar() {
+        try {
         // 模块导航
         const modules = ['mba', 'm360', 'opr', 'purchase', 'moh'];
         
@@ -625,6 +626,7 @@ const KNOWLEDGE_BASE = [{"id":"mba-strategy-001","module":"mba","category":"战�
         });
         catHtml += '</div>';
         document.getElementById('nav-categories').innerHTML = catHtml;
+        } catch(e) { console.error('buildSidebar error:', e); }
     }
 
     // ==================== 筛选逻辑 ====================
@@ -669,8 +671,10 @@ const KNOWLEDGE_BASE = [{"id":"mba-strategy-001","module":"mba","category":"战�
 
     // ==================== 渲染卡片 ====================
     function renderCards() {
+        try {
         const grid = document.getElementById('cardsGrid');
         const emptyState = document.getElementById('emptyState');
+        if (!grid || !emptyState) return;
         
         let filtered = KNOWLEDGE_BASE.filter(item => {
             if (currentFilter.module !== 'all' && item.module !== currentFilter.module) return false;
@@ -712,6 +716,7 @@ const KNOWLEDGE_BASE = [{"id":"mba-strategy-001","module":"mba","category":"战�
                 </div>
             `).join('');
         }
+        } catch(e) { console.error('renderCards error:', e); }
     }
 
     function getModuleName(m) {
@@ -838,6 +843,7 @@ const KNOWLEDGE_BASE = [{"id":"mba-strategy-001","module":"mba","category":"战�
 
     // ==================== 统计更新 ====================
     function updateStats() {
+        try {
         const total = KNOWLEDGE_BASE.length;
         const filtered = KNOWLEDGE_BASE.filter(item => {
             if (currentFilter.module !== 'all' && item.module !== currentFilter.module) return false;
@@ -903,6 +909,7 @@ const KNOWLEDGE_BASE = [{"id":"mba-strategy-001","module":"mba","category":"战�
                 </div>
             </div>
         `;
+        } catch(e) { console.error('updateStats error:', e); }
     }
 
     // ==================== PDF导出 ====================

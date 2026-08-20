@@ -1,9 +1,10 @@
-const CACHE_NAME = 'kb-v3';
+const CACHE_NAME = 'kb-v4';
 const ASSETS = [
   './',
-  './manifest.json',
-  './icon-192.png',
-  './icon-512.png'
+  './kb.html',
+  './mf.json',
+  './icon192.png',
+  './icon512.png'
 ];
 
 // 安装：缓存所有资源
@@ -23,14 +24,13 @@ self.addEventListener('activate', e => {
   );
 });
 
-// 请求拦截：网络优先，未命中则缓存
+// 请求拦截：缓存优先，未命中则网络
 self.addEventListener('fetch', e => {
-  // POST 请求不缓存
   if (e.request.method !== 'GET') return;
 
   const url = new URL(e.request.url);
 
-  // HTML 文档（主页）使用网络优先策略——确保总是获取最新内容
+  // HTML 文档使用网络优先策略——确保总是获取最新内容
   if (url.pathname === '/' || url.pathname.endsWith('kb.html') || url.pathname.endsWith('index.html')) {
     e.respondWith(
       fetch(e.request)
