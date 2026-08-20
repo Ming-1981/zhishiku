@@ -542,7 +542,11 @@ const KNOWLEDGE_BASE = [{"id":"mba-strategy-001","module":"mba","category":"战�
     console.log('[KB] Script parse start');
     window.onerror = function(msg, url, line, col, error) {
         var msgStr = String(msg || '').trim();
-        // 忽略一切包含 "script error"（大小写不敏感）的跨域错误
+        // 规则1：行号为0 → 跨域/系统错误，无法修复，直接屏蔽
+        if (line === 0) {
+            return true;
+        }
+        // 规则2：消息含 "script error"（大小写不敏感）→ 跨域脚本错误，屏蔽
         if (msgStr.toLowerCase().includes('script error')) {
             return true;
         }
